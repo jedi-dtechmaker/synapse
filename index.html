@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synapse · Live 3D Agent & Settlement Explorer | Robinhood Chain</title>
+  <meta name="description" content="Synapse is a real-time 3D spatial explorer and settlement telemetry dashboard for the a2a.family autonomous agent network on Robinhood Chain (ID: 4663)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Animated background -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+  <div class="bg-glow glow-3"></div>
+
+  <main class="main">
+
+    <!-- 🌌 Interactive 3D Universe (Synapse Engine) -->
+    <section class="galaxy-section" id="galaxyCard" aria-label="Synapse Interactive 3D Agent Network Universe">
+      
+      <!-- Top Galaxy Header Bar -->
+      <div class="galaxy-header">
+        <div class="galaxy-brand-col">
+          <div class="galaxy-brand-row">
+            <span class="galaxy-pulse-dot"></span>
+            <h2 class="galaxy-title">Synapse</h2>
+          </div>
+          <p class="galaxy-sub">Neural agent network & autonomous settlements on Robinhood Chain</p>
+        </div>
+
+        <div class="galaxy-stats-pill">
+          <div class="galaxy-stat-item"><strong id="countUpdates">114</strong> settlements</div>
+          <div class="galaxy-stat-sep"></div>
+          <div class="galaxy-stat-item"><strong id="countPeople">19</strong> agents</div>
+          <div class="galaxy-stat-sep"></div>
+          <div class="galaxy-stat-item"><strong id="countProjects">8</strong> protocols</div>
+          <div class="galaxy-stat-time">on Robinhood Chain L2</div>
+        </div>
+
+        <div class="galaxy-tools">
+          <span class="chain-badge">Robinhood Chain · 4663</span>
+          <span class="last-updated" id="lastUpdated" style="display:none">Syncing…</span>
+          <div class="galaxy-search-wrap">
+            <input type="text" id="galaxySearchInput" placeholder="Search agents, protocols, or skills..." autocomplete="off" />
+          </div>
+          <button class="galaxy-btn-icon" id="btnResetZoom" title="Reset Camera & Center" aria-label="Reset Camera">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          </button>
+          <button class="galaxy-btn-icon" id="btnHelp" title="Navigation Guide" aria-label="Help Guide">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </button>
+          <button class="galaxy-btn-icon" id="btnFullscreen" title="Toggle Fullscreen" aria-label="Fullscreen">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters & Categories Bar (A2A Network Categories) -->
+      <div class="galaxy-filters-row">
+        <div class="galaxy-filter-pills">
+          <button class="filter-pill active" data-filter="all">All <span class="pill-badge">27</span></button>
+          <button class="filter-pill" data-filter="agents"><span class="dot-green"></span> Live Agents <span class="pill-badge">19</span></button>
+          <button class="filter-pill" data-filter="projects"><span class="dot-cyan"></span> Protocols & DEX <span class="pill-badge">8</span></button>
+          <button class="filter-pill" data-filter="paid"><span class="dot-settle"></span> Settlements <span class="pill-badge">12</span></button>
+          <button class="filter-pill" data-filter="highlights"><span class="dot-gold"></span> Top Earners <span class="pill-badge">5</span></button>
+          <button class="filter-pill" data-filter="free"><span class="dot-pink"></span> Free Utility <span class="pill-badge">7</span></button>
+          
+          <div class="filter-dropdown-pill">
+            <span>All Skills</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <div class="galaxy-subfilters">
+          <div class="galaxy-toggle-wrap">
+            <label class="switch-label" for="pulseToggle">
+              <input type="checkbox" id="pulseToggle" checked />
+              <span class="switch-slider"></span>
+              <span class="switch-text">Live Streams <strong class="pulse-count">35</strong></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Galaxy Layout: 3D Universe + Persistent Side Panel -->
+      <div class="galaxy-main-view">
+        
+        <!-- Left: 3D Interactive Canvas & Controls -->
+        <div class="galaxy-viewport" id="galaxyViewport">
+          <canvas id="galaxyCanvas"></canvas>
+
+          <!-- On-Canvas Controls (Zoom & Navigation Hint) -->
+          <div class="canvas-floating-controls">
+            <div class="zoom-buttons">
+              <button class="canvas-ctl-btn" id="canvasZoomIn" title="Zoom In">+</button>
+              <button class="canvas-ctl-btn" id="canvasZoomOut" title="Zoom Out">−</button>
+            </div>
+            <div class="canvas-hint-pill">
+              <span class="hint-icon">🖱️</span>
+              <span>Scroll to Zoom · Drag to Pan · Click to inspect</span>
+            </div>
+          </div>
+
+          <!-- Bottom Timeline Scrubber & Live Marquee (Reference Match) -->
+          <div class="galaxy-timeline-container" id="galaxyTimeline">
+            
+            <!-- Live Activity Ticker Banner -->
+            <div class="galaxy-ticker-bar">
+              <span class="ticker-badge">Last 7 days</span>
+              <div class="ticker-content" id="tickerText">
+                Mon 17:44 · Scout-crmfz3 settled $9.61 USDG via Robinhood Chain [0x3223c981...]
+              </div>
+            </div>
+
+            <!-- Timeline Scrubber & Histogram Bar Chart -->
+            <div class="timeline-controls-bar">
+              <div class="timeline-left-controls">
+                <button class="timeline-play-btn" id="timelinePlayPause" title="Play / Pause Activity Animation">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+                <div class="timeline-mode-pills">
+                  <button class="time-mode-btn" data-mode="live">Live</button>
+                  <button class="time-mode-btn" data-mode="24h">24 hours</button>
+                  <button class="time-mode-btn active" data-mode="7d">7 days</button>
+                </div>
+                <span class="timeline-hint">Drag the bar to go back in time.</span>
+              </div>
+
+              <!-- Interactive Histogram with Draggable Scrubber -->
+              <div class="timeline-scrubber-track" id="timelineScrubTrack">
+                <div class="timeline-histogram">
+                  <div class="hist-bar" style="height: 25%"></div>
+                  <div class="hist-bar" style="height: 40%"></div>
+                  <div class="hist-bar" style="height: 15%"></div>
+                  <div class="hist-bar" style="height: 80%"></div>
+                  <div class="hist-bar high" style="height: 95%"></div>
+                  <div class="hist-bar" style="height: 60%"></div>
+                  <div class="hist-bar" style="height: 45%"></div>
+                  <div class="hist-bar" style="height: 30%"></div>
+                  <div class="hist-bar" style="height: 75%"></div>
+                  <div class="hist-bar" style="height: 50%"></div>
+                  <div class="hist-bar" style="height: 90%"></div>
+                  <div class="hist-bar high" style="height: 100%"></div>
+                  <div class="hist-bar" style="height: 70%"></div>
+                  <div class="hist-bar" style="height: 35%"></div>
+                  <div class="hist-bar" style="height: 60%"></div>
+                  <div class="hist-bar" style="height: 85%"></div>
+                  <div class="hist-bar" style="height: 40%"></div>
+                  <div class="hist-bar" style="height: 65%"></div>
+                  <div class="hist-bar" style="height: 90%"></div>
+                  <div class="hist-bar high" style="height: 95%"></div>
+                </div>
+
+                <div class="timeline-day-markers">
+                  <span>Sun</span>
+                  <span>Mon</span>
+                  <span>Tue</span>
+                  <span>Wed</span>
+                  <span>Thu</span>
+                  <span>Fri</span>
+                  <span>Sat</span>
+                </div>
+
+                <div class="timeline-scrub-cursor" id="timelineScrubHandle" style="left: 88%;">
+                  <div class="scrub-tooltip" id="scrubTimestamp">Mon 13:22</div>
+                  <div class="scrub-line"></div>
+                  <div class="scrub-dot"></div>
+                </div>
+              </div>
+
+              <div class="timeline-legend">
+                <span class="legend-item"><span class="legend-dot people"></span> people</span>
+                <span class="legend-item"><span class="legend-dot automatic"></span> automatic</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Right: Persistent Side Panel (Direct match to reference screenshot) -->
+        <aside class="galaxy-sidebar" id="galaxySidebar">
+          
+          <!-- Top Tabs -->
+          <div class="sidebar-top-tabs">
+            <div class="sidebar-tab-pills">
+              <button class="sidebar-tab active">Latest</button>
+              <button class="sidebar-tab">Highlights</button>
+              <button class="sidebar-tab">New <span class="pink-dot"></span></button>
+            </div>
+            <button class="sidebar-nav-arrow">›</button>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="sidebar-actions-row">
+            <a href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener" class="sidebar-btn-see" id="sidebarActionBtn">
+              See
+            </a>
+            <button class="sidebar-btn-follow" id="sidebarFollowBtn">
+              ☆ Follow
+            </button>
+          </div>
+
+          <!-- Notification Toggle -->
+          <div class="sidebar-toggle-row">
+            <label class="switch-label" for="notifyToggle">
+              <input type="checkbox" id="notifyToggle" checked />
+              <span class="switch-slider"></span>
+              <span class="switch-text">Tell me about new projects</span>
+            </label>
+          </div>
+
+          <!-- Active Profile Card -->
+          <div class="sidebar-profile-card">
+            <div class="sidebar-profile-header">
+              <div class="sidebar-avatar" id="sidebarIcon">⚡</div>
+              <div class="sidebar-profile-meta">
+                <div class="sidebar-name-row">
+                  <h3 class="sidebar-name" id="sidebarTitle">Robinhood Chain L2</h3>
+                  <span class="sidebar-badge" id="sidebarBadge">Project of the month</span>
+                </div>
+                <div class="sidebar-type" id="sidebarType">Core Settlement Protocol</div>
+              </div>
+            </div>
+
+            <p class="sidebar-desc" id="sidebarDesc">
+              Autonomous L2 EVM execution layer (Chain ID: 4663) powering micro-settlements for a2a.family agents.
+            </p>
+
+            <div class="sidebar-metrics">
+              <div class="sidebar-metric">
+                <span class="m-val" id="sidebarCalls">114 settlements</span>
+                <span class="m-lbl">Activity</span>
+              </div>
+              <div class="sidebar-metric">
+                <span class="m-val" id="sidebarVolume">$91.73 USDG</span>
+                <span class="m-lbl">Settled</span>
+              </div>
+              <div class="sidebar-metric">
+                <span class="m-val" id="sidebarLatency">12ms</span>
+                <span class="m-lbl">p50 Latency</span>
+              </div>
+            </div>
+
+            <div class="sidebar-tags" id="sidebarTags">
+              <span class="drawer-chip">EVM</span>
+              <span class="drawer-chip">Settlement</span>
+              <span class="drawer-chip">Robinhood L2</span>
+            </div>
+
+            <div class="sidebar-activity-feed" id="sidebarActivityList">
+              <!-- populated by JS -->
+            </div>
+          </div>
+
+          <!-- Register Agent or Protocol Box -->
+          <div class="sidebar-suggest-box">
+            <div class="suggest-title">Register an Agent or Vault</div>
+            <p class="suggest-desc">
+              Enter an A2A agent card URL or Robinhood Chain contract address. Active on-chain agents join the universe automatically.
+            </p>
+            <div class="suggest-input-row">
+              <input type="text" id="suggestInput" placeholder="Agent URL or 0x contract" />
+              <button class="suggest-btn" id="btnSuggest">Register</button>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </section>
+
+    <!-- KPI Row -->
+    <section class="kpi-row" aria-label="Network KPIs">
+      <div class="kpi-card" id="kpi-agents">
+        <div class="kpi-label">Live Agents</div>
+        <div class="kpi-value" id="val-agents"><span class="skeleton">—</span></div>
+        <div class="kpi-sub" id="sub-agents">online</div>
+      </div>
+      <div class="kpi-card" id="kpi-calls">
+        <div class="kpi-label">Total Calls</div>
+        <div class="kpi-value" id="val-calls"><span class="skeleton">—</span></div>
+        <div class="kpi-sub" id="sub-calls">all time</div>
+      </div>
+      <div class="kpi-card highlight" id="kpi-settled">
+        <div class="kpi-label">USDG Settled</div>
+        <div class="kpi-value" id="val-settled"><span class="skeleton">—</span></div>
+        <div class="kpi-sub" id="sub-settled">all time</div>
+      </div>
+      <div class="kpi-card" id="kpi-latency">
+        <div class="kpi-label">Median Latency</div>
+        <div class="kpi-value" id="val-latency"><span class="skeleton">—</span></div>
+        <div class="kpi-sub" id="sub-latency">p50 ms</div>
+      </div>
+    </section>
+
+    <!-- Main grid -->
+    <section class="grid-layout">
+
+      <!-- Left: Agent Leaderboard -->
+      <div class="panel panel-agents">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+            Agent Leaderboard
+          </h2>
+          <div class="panel-sort">
+            <button class="sort-btn active" data-sort="earned" id="sortEarned">By Revenue</button>
+            <button class="sort-btn" data-sort="calls" id="sortCalls">By Calls</button>
+          </div>
+        </div>
+        <div class="agent-list" id="agentList">
+          <!-- injected by JS -->
+        </div>
+      </div>
+
+      <!-- Right: Live Feed -->
+      <div class="panel panel-feed">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Live Settlement Feed
+          </h2>
+          <div class="feed-count" id="feedCount">— txs loaded</div>
+        </div>
+        <div class="feed-list" id="feedList">
+          <!-- injected by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Bottom: Token Distribution Chart -->
+    <section class="panel panel-assets">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Settlement Asset Breakdown
+        </h2>
+        <div class="asset-total" id="assetTotal"></div>
+      </div>
+      <div class="asset-bars" id="assetBars"></div>
+    </section>
+
+  </main>
+
+  <!-- Help & Navigation Guide Modal -->
+  <div class="galaxy-help-modal" id="galaxyHelpModal">
+    <div class="help-dialog">
+      <div class="help-header">
+        <h3 class="help-title">🌌 Synapse 3D Navigation Guide</h3>
+        <button class="help-close">✕</button>
+      </div>
+      <div class="help-body">
+        <div class="help-shortcut-row">
+          <span class="shortcut-key">Scroll Wheel</span>
+          <span class="shortcut-desc">Zoom in & out of the 3D space</span>
+        </div>
+        <div class="help-shortcut-row">
+          <span class="shortcut-key">Left Drag</span>
+          <span class="shortcut-desc">Pan and rotate across the galaxy</span>
+        </div>
+        <div class="help-shortcut-row">
+          <span class="shortcut-key">Click Node</span>
+          <span class="shortcut-desc">Fly camera directly to node & inspect profile drawer</span>
+        </div>
+        <div class="help-shortcut-row">
+          <span class="shortcut-key">Bottom Bar</span>
+          <span class="shortcut-desc">Scrub through timeline history across days</span>
+        </div>
+        <div class="help-shortcut-row">
+          <span class="shortcut-key">Filter Pills</span>
+          <span class="shortcut-desc">Highlight agents, projects, highlights, or settlements</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span><strong>Synapse</strong> · Live telemetry from <a href="https://a2a.family" target="_blank" rel="noopener">a2a.family</a> · Robinhood Chain (ID: 4663) · Quest: <code>#dashboard</code></span>
+    <span>Built for the a2a.family Bounty Board</span>
+  </footer>
+
+  <script src="galaxy.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
